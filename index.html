@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mejores Noticias — Classic meets Gen Z</title>
+    <title>Buenos Días — Classic meets Gen Z</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -128,20 +128,27 @@
         gap: 3rem;
       }
 
-      .masthead {
+      .brand-banner {
         text-align: center;
+        padding: 1.5rem clamp(1.5rem, 4vw, 4rem) 2rem;
+        border-bottom: 1px solid rgba(11, 12, 17, 0.08);
+        background: var(--porcelain);
       }
 
-      .masthead h1 {
+      .brand-name {
         font-family: 'Playfair Display', serif;
-        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-size: clamp(3rem, 7vw, 5rem);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         margin: 0;
-        letter-spacing: 0.08em;
       }
 
-      .masthead p {
+      .brand-subline {
+        margin-top: 0.35rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
         color: var(--warm-gray);
-        margin: 0.5rem 0 0;
       }
 
       .promo-banner {
@@ -171,115 +178,146 @@
         color: var(--magenta-punch);
       }
 
-      .content-wrapper {
+      .front-page {
         display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: clamp(2rem, 4vw, 4rem);
+        grid-template-columns: 0.95fr 1.2fr 0.9fr;
+        gap: clamp(1.5rem, 3vw, 3rem);
         align-items: start;
+        border-bottom: 1px solid rgba(11, 12, 17, 0.12);
+        padding-bottom: 2.5rem;
       }
 
-      .main-content {
+      .lede-list {
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 1.75rem;
+        border-top: 2px solid var(--ink);
+        padding-top: 1rem;
       }
 
-      .sidebar {
+      .lede-item {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 0.5rem;
       }
 
-      .lead-story {
-        background: #fff;
-        border-radius: 20px;
+      .lede-item h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        margin: 0;
+      }
+
+      .lede-item p {
+        margin: 0;
+        color: #4b4740;
+      }
+
+      .lede-meta {
+        font-size: 0.8rem;
+        letter-spacing: 0.3em;
+        color: var(--warm-gray);
+      }
+
+      .feature-photo {
+        border: 1px solid rgba(11, 12, 17, 0.1);
+        border-radius: 28px;
         overflow: hidden;
-        box-shadow: 0 8px 32px rgba(11, 12, 17, 0.08);
-        transition: transform 400ms ease, box-shadow 300ms ease;
+        box-shadow: 0 18px 40px rgba(3, 3, 10, 0.12);
+        background: #fff;
         transform-style: preserve-3d;
+        transition: transform 400ms ease, box-shadow 300ms ease;
       }
 
-      .lead-story:hover {
-        transform: translateY(-8px) rotateX(-2deg);
-        box-shadow: 0 16px 48px rgba(11, 12, 17, 0.12);
-      }
-
-      .lead-image {
+      .feature-photo img {
         width: 100%;
-        height: 400px;
+        height: 420px;
         object-fit: cover;
         display: block;
       }
 
-      .lead-content {
-        padding: 2rem;
-      }
-
-      .lead-category {
-        font-size: 0.8rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--magenta-punch);
-        margin-bottom: 1rem;
-      }
-
-      .lead-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        margin: 0 0 1rem;
-      }
-
-      .lead-author {
+      .feature-photo figcaption {
+        padding: 1rem 1.5rem 1.5rem;
         font-size: 0.9rem;
         color: var(--warm-gray);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
       }
 
-      .sidebar-item {
-        display: flex;
-        gap: 1rem;
-        padding: 1rem;
+      .spotlight-card {
         background: #fff;
-        border-radius: 16px;
-        transition: transform 250ms ease, box-shadow 250ms ease;
-        cursor: pointer;
-      }
-
-      .sidebar-item:hover {
-        transform: translateX(8px);
-        box-shadow: 0 8px 24px rgba(11, 12, 17, 0.08);
-      }
-
-      .sidebar-thumb {
-        width: 80px;
-        height: 80px;
-        border-radius: 12px;
-        object-fit: cover;
-        flex-shrink: 0;
-      }
-
-      .sidebar-content {
-        flex: 1;
+        border-radius: 24px;
+        border: 1px solid rgba(11, 12, 17, 0.08);
+        box-shadow: 0 12px 32px rgba(11, 12, 17, 0.08);
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        transform-style: preserve-3d;
+        transition: transform 400ms ease, box-shadow 300ms ease;
       }
 
-      .sidebar-title {
+      .spotlight-card img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+      }
+
+      .spotlight-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .spotlight-body h3 {
         font-family: 'Playfair Display', serif;
-        font-size: 1.1rem;
-        line-height: 1.3;
-        margin: 0 0 0.5rem;
-        color: var(--ink);
+        margin: 0;
+        font-size: 1.4rem;
       }
 
-      .sidebar-author {
+      .spotlight-body p {
+        margin: 0;
+        color: #4b4740;
+      }
+
+      .spotlight-meta {
         font-size: 0.8rem;
+        letter-spacing: 0.3em;
         color: var(--warm-gray);
+      }
+
+      .secondary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        padding-top: 2.5rem;
+        border-bottom: 1px solid rgba(11, 12, 17, 0.08);
+        padding-bottom: 2.5rem;
+      }
+
+      .secondary-card {
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid rgba(11, 12, 17, 0.08);
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+
+      .secondary-card h4 {
+        margin: 0;
+        font-size: 0.85rem;
+        letter-spacing: 0.25em;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        color: var(--warm-gray);
+      }
+
+      .secondary-card h3 {
+        margin: 0;
+        font-family: 'Playfair Display', serif;
+      }
+
+      .secondary-card p {
+        margin: 0;
+        color: #4b4740;
       }
 
       .section-title {
@@ -322,13 +360,6 @@
         color: #4b4740;
       }
 
-      .section-title {
-        font-size: 0.85rem;
-        letter-spacing: 0.4em;
-        text-transform: uppercase;
-        color: var(--warm-gray);
-        margin-bottom: 1rem;
-      }
 
       footer {
         background: #111114;
@@ -406,88 +437,94 @@
       </div>
     </div>
 
+    <div class="brand-banner">
+      <h1 class="brand-name">Buenos Días</h1>
+      <p class="brand-subline">Edición Internacional</p>
+    </div>
+
     <div class="promo-banner">
-      <strong>Give a gift worth talking about.</strong> Give a year of Mejores Noticias, plus a free tote.
+      <strong>Give a gift worth talking about.</strong> Give a year of Buenos Días, plus a free tote.
     </div>
 
     <main>
-      <div class="content-wrapper">
-        <div class="main-content">
-          <article class="lead-story" data-tilt>
-            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80" alt="Hotel bell" class="lead-image" />
-            <div class="lead-content">
-              <div class="lead-category">Technology</div>
-              <h1 class="lead-title">Why Hotel-Room Cancellations Disappeared</h1>
-              <p class="lead-author">By IAN BOGOST</p>
-            </div>
+      <section class="front-page">
+        <div class="lede-list">
+          <article class="lede-item">
+            <h2>Government Reopens Without Data That Guides Markets and the Fed</h2>
+            <p>Jobs and inflation data will be released late and with caveats, complicating the Federal Reserve's interest-rate deliberations.</p>
+            <div class="lede-meta">5 MIN READ</div>
           </article>
-
-          <section>
-            <div class="section-title">Latest Stories</div>
-            <div class="grid">
-              <article class="story-card">
-                <h3>Rosalía orchestrates the club</h3>
-                <p>Her LUX suite takes reggaeton into string-laden crescendos.</p>
-              </article>
-              <article class="story-card">
-                <h3>Taylor sets the neon rodeo</h3>
-                <p>Showgirl diary becomes a multimedia atelier for fans.</p>
-              </article>
-              <article class="story-card">
-                <h3>Doja &amp; the new Janet</h3>
-                <p>Choreography labs turn a tour into interactive theater.</p>
-              </article>
-              <article class="story-card">
-                <h3>Charlie Puth, professor</h3>
-                <p>Can synesthetic theory reshape pop hooks?</p>
-              </article>
-            </div>
-          </section>
+          <article class="lede-item">
+            <h2>Trump Turns to Affordability Message Amid Economic Frustration</h2>
+            <p>The White House is facing backlash from American consumers as higher costs from tariffs blunt wage gains.</p>
+            <div class="lede-meta">6 MIN READ</div>
+          </article>
+          <article class="lede-item">
+            <h2>Stock Market Rally Is Dented as Signs of Anxiety Emerge</h2>
+            <p>Investors pull back from high-flying AI bets and retreat to utilities, signaling nerves beneath an otherwise rosy tape.</p>
+            <div class="lede-meta">4 MIN READ</div>
+          </article>
         </div>
 
-        <aside class="sidebar">
-          <div class="section-title">Popular</div>
-          
-          <article class="sidebar-item">
-            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=200&q=80" alt="Portrait" class="sidebar-thumb" />
-            <div class="sidebar-content">
-              <h3 class="sidebar-title">Four Simple Questions for Marjorie Taylor Greene</h3>
-              <p class="sidebar-author">By ADAM SERWER</p>
-            </div>
-          </article>
+        <figure class="feature-photo" data-tilt>
+          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80" alt="People riding escalator" />
+          <figcaption>Illustration by Akshita Chandra / Buenos Días</figcaption>
+        </figure>
 
-          <article class="sidebar-item">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" alt="Portrait" class="sidebar-thumb" />
-            <div class="sidebar-content">
-              <h3 class="sidebar-title">Sympathy for a Handsome Devil</h3>
-              <p class="sidebar-author">By JUDITH SHULEVITZ</p>
-            </div>
-          </article>
-
-          <article class="sidebar-item">
-            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" alt="Portrait" class="sidebar-thumb" />
-            <div class="sidebar-content">
-              <h3 class="sidebar-title">The President Who Cried 'Hoax'</h3>
-              <p class="sidebar-author">By DAVID A. GRAHAM</p>
-            </div>
-          </article>
-
-          <article class="sidebar-item">
-            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=200&q=80" alt="Portrait" class="sidebar-thumb" />
-            <div class="sidebar-content">
-              <h3 class="sidebar-title">A Great Author's Ongoing Struggle</h3>
-              <p class="sidebar-author">By KAITLYN TIFANY</p>
-            </div>
-          </article>
-
-          <div class="section-title">Newsletters</div>
-          <div class="story-card" style="text-align: center;">
-            <h3>The Daily</h3>
-            <p>Get our best stories in your inbox every morning.</p>
-            <button class="pulse-btn" style="margin-top: 1rem; width: 100%;">Sign Up</button>
+        <article class="spotlight-card" data-tilt>
+          <img src="https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80" alt="Magazine collage" />
+          <div class="spotlight-body">
+            <h3>How a Seattle Alt-Weekly Became a Progressive Kingmaker</h3>
+            <p>Endorsements from The Stranger have become a must-have for some politicians, who know to bring snacks to meetings with the paper's writers.</p>
+            <span class="spotlight-meta">6 MIN READ</span>
           </div>
-        </aside>
-      </div>
+        </article>
+      </section>
+
+      <section class="secondary-grid">
+        <article class="secondary-card">
+          <h4>Audio</h4>
+          <h3>Why Hotel-Room Cancellations Disappeared</h3>
+          <p>Architects argue that transient spaces need deep listening rooms.</p>
+        </article>
+        <article class="secondary-card">
+          <h4>Ideas</h4>
+          <h3>Four Simple Questions for Marjorie Taylor Greene</h3>
+          <p>Democracy scholars answer with memes and footnotes.</p>
+        </article>
+        <article class="secondary-card">
+          <h4>Culture</h4>
+          <h3>The President Who Cried “Hoax”</h3>
+          <p>Mixed reality memorials change how we confront history.</p>
+        </article>
+        <article class="secondary-card">
+          <h4>Business</h4>
+          <h3>Sympathy for a Handsome Devil</h3>
+          <p>Luxury houses court the internet's favorite antiheroes.</p>
+        </article>
+      </section>
+
+      <section>
+        <div class="section-title">Culture Capsules</div>
+        <div class="grid">
+          <article class="story-card">
+            <h3>Rosalía orchestrates the club</h3>
+            <p>Her LUX suite takes reggaeton into string-laden crescendos.</p>
+          </article>
+          <article class="story-card">
+            <h3>Taylor sets the neon rodeo</h3>
+            <p>Showgirl diary becomes a multimedia atelier for fans.</p>
+          </article>
+          <article class="story-card">
+            <h3>Doja &amp; the new Janet</h3>
+            <p>Choreography labs turn a tour into interactive theater.</p>
+          </article>
+          <article class="story-card">
+            <h3>Charlie Puth, professor</h3>
+            <p>Can synesthetic theory reshape pop hooks?</p>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer>
