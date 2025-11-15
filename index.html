@@ -69,6 +69,7 @@
         letter-spacing: 0.02em;
         position: relative;
         padding-bottom: 0.25rem;
+        transition: opacity 0.3s ease, color 0.3s ease;
       }
 
       .section-nav a::after {
@@ -148,8 +149,8 @@
 
       .brand-subline {
         margin-top: 0.35rem;
-        font-size: 0.9rem;
-        letter-spacing: 0.35em;
+        font-size: 0.75rem;
+        letter-spacing: 0.25em;
         text-transform: uppercase;
         color: var(--warm-gray);
       }
@@ -190,6 +191,36 @@
         padding-bottom: 2.5rem;
       }
 
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-in {
+        animation: fadeInUp 0.6s ease-out forwards;
+      }
+
+      @keyframes gradientShift {
+        0%, 100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .pulse-btn {
+        background: linear-gradient(270deg, var(--magenta-punch), var(--electric-mint), var(--magenta-punch));
+        background-size: 200% 200%;
+        animation: gradientShift 3s ease infinite;
+      }
+
       .lede-list {
         display: flex;
         flex-direction: column;
@@ -202,12 +233,23 @@
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
+        cursor: pointer;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      .lede-item:hover {
+        transform: translateX(8px);
+      }
+
+      .lede-item:hover h2 {
+        color: var(--magenta-punch);
       }
 
       .lede-item h2 {
         font-family: 'Playfair Display', serif;
         font-size: 1.6rem;
         margin: 0;
+        transition: color 0.3s ease;
       }
 
       .lede-item p {
@@ -252,8 +294,14 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        cursor: pointer;
         transform-style: preserve-3d;
-        transition: transform 400ms ease, box-shadow 300ms ease;
+        transition: transform 400ms ease, box-shadow 300ms ease, border-color 300ms ease;
+      }
+
+      .spotlight-card:hover {
+        box-shadow: 0 20px 48px rgba(11, 12, 17, 0.15);
+        border-color: var(--electric-mint);
       }
 
       .spotlight-card img {
@@ -303,6 +351,14 @@
         display: flex;
         flex-direction: column;
         gap: 0.65rem;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+
+      .secondary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(11, 12, 17, 0.12);
+        border-color: var(--magenta-punch);
       }
 
       .secondary-card h4 {
@@ -345,12 +401,14 @@
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
-        transition: transform 250ms ease, box-shadow 250ms ease;
+        cursor: pointer;
+        transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
       }
 
       .story-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border-color: var(--electric-mint);
       }
 
       .story-card h3 {
@@ -386,26 +444,76 @@
       }
 
       @media (max-width: 1024px) {
-        .content-wrapper {
+        .front-page {
           grid-template-columns: 1fr;
+          gap: 2rem;
         }
-        
-        .sidebar {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+        .feature-photo {
+          order: -1;
         }
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 768px) {
+        .brand-name {
+          font-size: clamp(2rem, 8vw, 3rem);
+        }
+
+        .brand-subline {
+          font-size: 0.65rem;
+          letter-spacing: 0.15em;
+        }
+
         .section-nav {
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 0.75rem;
+          padding: 1rem;
+          justify-content: center;
         }
-        .lead-title {
-          font-size: 1.8rem;
+
+        .section-nav a {
+          font-size: 0.8rem;
         }
-        .lead-image {
+
+        .secondary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .lede-item h2 {
+          font-size: 1.3rem;
+        }
+
+        .topline {
+          font-size: 0.75rem;
+          padding: 0.5rem 1rem;
+        }
+
+        main {
+          padding: clamp(1rem, 3vw, 2rem);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .ticker-track {
+          font-size: 0.8rem;
+          gap: 2rem;
+        }
+
+        .promo-banner {
+          font-size: 0.95rem;
+          padding: 1rem;
+        }
+
+        .feature-photo img {
           height: 280px;
+        }
+
+        .spotlight-card img {
+          height: 200px;
         }
       }
     </style>
@@ -431,7 +539,7 @@
 
     <div class="brand-banner">
       <h1 class="brand-name">Buenos Días</h1>
-      <p class="brand-subline">Edición Internacional</p>
+      <p class="brand-subline">Arica, Valparaíso, Santiago, Valdivia, Punta Arenas</p>
     </div>
 
     <nav class="section-nav">
@@ -551,6 +659,7 @@
     </footer>
 
     <script>
+      // Tilt effect for cards
       const tiltCards = document.querySelectorAll('[data-tilt]');
 
       tiltCards.forEach((card) => {
@@ -567,6 +676,97 @@
           card.style.transform = 'rotateY(0deg) rotateX(0deg)';
         });
       });
+
+      // Intersection Observer for fade-in animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate-in');
+            }, index * 100);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      // Observe all articles and cards
+      document.querySelectorAll('.lede-item, .story-card, .secondary-card, .spotlight-card, .feature-photo').forEach((el) => {
+        el.style.opacity = '0';
+        observer.observe(el);
+      });
+
+      // Parallax effect on scroll
+      let scrolled = 0;
+      window.addEventListener('scroll', () => {
+        scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.feature-photo img');
+        parallaxElements.forEach((el) => {
+          const speed = 0.5;
+          el.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+      });
+
+      // Add smooth hover effect to navigation links
+      const navLinks = document.querySelectorAll('.section-nav a');
+      navLinks.forEach(link => {
+        link.addEventListener('mouseenter', (e) => {
+          navLinks.forEach(l => {
+            if (l !== e.target) {
+              l.style.opacity = '0.5';
+            }
+          });
+        });
+
+        link.addEventListener('mouseleave', () => {
+          navLinks.forEach(l => {
+            l.style.opacity = '1';
+          });
+        });
+      });
+
+      // Add click ripple effect
+      document.querySelectorAll('.story-card, .secondary-card, .lede-item').forEach(card => {
+        card.addEventListener('click', function(e) {
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          ripple.style.position = 'absolute';
+          ripple.style.borderRadius = '50%';
+          ripple.style.background = 'rgba(255, 61, 129, 0.3)';
+          ripple.style.transform = 'scale(0)';
+          ripple.style.animation = 'ripple 0.6s ease-out';
+          ripple.style.pointerEvents = 'none';
+
+          this.style.position = 'relative';
+          this.style.overflow = 'hidden';
+          this.appendChild(ripple);
+
+          setTimeout(() => ripple.remove(), 600);
+        });
+      });
+
+      // Add ripple animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes ripple {
+          to {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
     </script>
   </body>
 </html>
