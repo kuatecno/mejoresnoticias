@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "scrape:newyorker": "node api/scrape-newyorker.js"
+    "scrape:newyorker": "node api/scrape-newyorker.js",
+    "scrape:all": "node api/scrape-all.js",
+    "ai:process": "node ai/processor.js",
+    "ai:select": "node ai/select-and-generate.js",
+    "dashboard": "node dashboard-server.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "fast-xml-parser": "^4.5.0",
+    "openai": "^4.71.1",
     "pg": "^8.13.0"
   }
 }

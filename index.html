@@ -7,17 +7,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&family=Cormorant:wght@400;600&family=Forum:wght@400&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --ink: #0b0c11;
-        --porcelain: #f8f5f0;
-        --warm-gray: #b8aca0;
-        --electric-mint: #2df3c8;
-        --magenta-punch: #ff3d81;
-        --midnight: #03030a;
+        --ink: #000000;
+        --porcelain: #ffffff;
+        --warm-gray: #666666;
+        --light-gray: #f7f7f7;
+        --border-gray: #e2e2e2;
+        --text-gray: #333333;
+        --nyt-blue: #326891;
+        --market-green: #56a363;
+        --market-red: #b32824;
       }
 
       * {
@@ -36,57 +39,127 @@
         position: sticky;
         top: 0;
         z-index: 20;
-        background: rgba(248, 245, 240, 0.9);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(11, 12, 17, 0.08);
+        background: var(--porcelain);
+        border-bottom: 1px solid var(--border-gray);
       }
 
-      .topline {
+      .header-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem clamp(1.5rem, 4vw, 4rem);
-        font-size: 0.85rem;
-        letter-spacing: 0.1em;
+        padding: 0.25rem 2rem;
+        font-size: 0.7rem;
+        border-bottom: 1px solid var(--border-gray);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .today-paper {
+        color: var(--text-gray);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .date-section {
+        color: var(--warm-gray);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .market-data {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.75rem;
+      }
+
+      .market-positive {
+        color: var(--market-green);
+      }
+
+      .market-negative {
+        color: var(--market-red);
+      }
+
+      .subscribe-btn {
+        background: var(--nyt-blue);
+        color: white;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .subscribe-btn:hover {
+        background: #265a84;
+      }
+
+      .login-btn {
+        background: transparent;
+        color: var(--text-gray);
+        border: 1px solid var(--border-gray);
+        padding: 0.3rem 0.8rem;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .login-btn:hover {
+        background: var(--light-gray);
+      }
+
+      .header-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 2rem;
+      }
+
+      .logo {
+        font-family: 'Forum', serif;
+        font-size: 2rem;
+        font-weight: 400;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink);
+        text-decoration: none;
       }
 
       .section-nav {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
-        padding: 1rem clamp(1.5rem, 4vw, 4rem);
-        border-bottom: 1px solid rgba(11, 12, 17, 0.08);
+        justify-content: space-between;
+        padding: 0.25rem 2rem;
+        border-bottom: 1px solid var(--border-gray);
         background: var(--porcelain);
+        font-size: 0.8rem;
+        width: 100%;
       }
 
       .section-nav a {
         font-family: 'Space Grotesk', sans-serif;
         text-decoration: none;
+        color: var(--text-gray);
+        font-weight: 400;
+        transition: color 0.2s ease;
+      }
+
+      .section-nav a:hover {
         color: var(--ink);
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 0.02em;
-        position: relative;
-        padding-bottom: 0.25rem;
-        transition: opacity 0.3s ease, color 0.3s ease;
-      }
-
-      .section-nav a::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: var(--ink);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 250ms ease;
-      }
-
-      .section-nav a:hover::after {
-        transform: scaleX(1);
+        text-decoration: underline;
       }
 
       .pulse-btn {
@@ -103,18 +176,18 @@
       .ticker {
         width: 100%;
         overflow: hidden;
-        border-top: 1px solid rgba(11, 12, 17, 0.08);
-        border-bottom: 1px solid rgba(11, 12, 17, 0.08);
+        border-top: 1px solid var(--border-gray);
+        border-bottom: 1px solid var(--border-gray);
         background: #fff;
       }
 
       .ticker-track {
         display: flex;
-        gap: 3rem;
+        gap: 1.5rem;
         white-space: nowrap;
         animation: ticker 20s linear infinite;
-        padding: 0.5rem clamp(1.5rem, 4vw, 4rem);
-        font-size: 0.9rem;
+        padding: 0.2rem clamp(0.5rem, 1vw, 1rem);
+        font-size: 0.75rem;
       }
 
       @keyframes ticker {
@@ -127,7 +200,7 @@
       }
 
       main {
-        padding: clamp(2rem, 5vw, 5rem);
+        padding: clamp(1rem, 2vw, 2rem);
         display: flex;
         flex-direction: column;
         gap: 3rem;
@@ -135,22 +208,22 @@
 
       .brand-banner {
         text-align: center;
-        padding: 1.5rem clamp(1.5rem, 4vw, 4rem) 1rem;
+        padding: 0.4rem clamp(0.5rem, 1vw, 1rem) 0.25rem;
         background: var(--porcelain);
       }
 
       .brand-name {
         font-family: 'Playfair Display', serif;
-        font-size: clamp(3rem, 7vw, 5rem);
-        letter-spacing: 0.12em;
+        font-size: clamp(2rem, 4vw, 3rem);
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         margin: 0;
       }
 
       .brand-subline {
-        margin-top: 0.35rem;
-        font-size: 0.75rem;
-        letter-spacing: 0.25em;
+        margin-top: 0.1rem;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
         color: var(--warm-gray);
       }
@@ -224,8 +297,8 @@
       .lede-list {
         display: flex;
         flex-direction: column;
-        gap: 1.75rem;
-        border-top: 2px solid var(--ink);
+        gap: 1.5rem;
+        border-top: 1px solid var(--border-gray);
         padding-top: 1rem;
       }
 
@@ -234,56 +307,64 @@
         flex-direction: column;
         gap: 0.5rem;
         cursor: pointer;
-        transition: transform 0.3s ease, opacity 0.3s ease;
+        transition: color 0.2s ease;
+        padding: 0.5rem 0;
       }
 
       .lede-item:hover {
-        transform: translateX(8px);
+        color: var(--nyt-blue);
       }
 
       .lede-item:hover h2 {
-        color: var(--magenta-punch);
+        color: var(--nyt-blue);
       }
 
       .lede-item h2 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.6rem;
+        font-family: 'Cormorant', serif;
+        font-size: 1.8rem;
+        font-weight: 600;
         margin: 0;
-        transition: color 0.3s ease;
+        line-height: 1.2;
+        transition: color 0.2s ease;
       }
 
       .lede-item p {
         margin: 0;
-        color: #4b4740;
+        color: var(--text-gray);
+        font-size: 0.95rem;
+        line-height: 1.4;
       }
 
       .lede-meta {
-        font-size: 0.8rem;
-        letter-spacing: 0.3em;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         color: var(--warm-gray);
+        margin-top: 0.25rem;
       }
 
       .feature-photo {
-        border: 1px solid rgba(11, 12, 17, 0.1);
-        border-radius: 28px;
+        border: 1px solid var(--border-gray);
+        border-radius: 4px;
         overflow: hidden;
-        box-shadow: 0 18px 40px rgba(3, 3, 10, 0.12);
         background: #fff;
-        transform-style: preserve-3d;
-        transition: transform 400ms ease, box-shadow 300ms ease;
       }
 
       .feature-photo img {
         width: 100%;
-        height: 420px;
+        height: 400px;
         object-fit: cover;
         display: block;
       }
 
       .feature-photo figcaption {
-        padding: 1rem 1.5rem 1.5rem;
-        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
         color: var(--warm-gray);
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
       .spotlight-card {
@@ -318,20 +399,27 @@
       }
 
       .spotlight-body h3 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Cormorant', serif;
+        font-size: 1.8rem;
+        font-weight: 600;
         margin: 0;
-        font-size: 1.4rem;
+        line-height: 1.2;
       }
 
       .spotlight-body p {
         margin: 0;
-        color: #4b4740;
+        color: var(--text-gray);
+        font-size: 0.95rem;
+        line-height: 1.4;
       }
 
       .spotlight-meta {
-        font-size: 0.8rem;
-        letter-spacing: 0.3em;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         color: var(--warm-gray);
+        margin-top: 0.25rem;
       }
 
       .secondary-grid {
@@ -371,12 +459,17 @@
 
       .secondary-card h3 {
         margin: 0;
-        font-family: 'Playfair Display', serif;
+        font-family: 'Cormorant', serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        line-height: 1.2;
       }
 
       .secondary-card p {
         margin: 0;
-        color: #4b4740;
+        color: var(--text-gray);
+        font-size: 0.95rem;
+        line-height: 1.4;
       }
 
       .section-title {
@@ -412,13 +505,18 @@
       }
 
       .story-card h3 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Cormorant', serif;
+        font-size: 1.8rem;
+        font-weight: 600;
         margin: 0;
+        line-height: 1.2;
       }
 
       .story-card p {
         margin: 0;
-        color: #4b4740;
+        color: var(--text-gray);
+        font-size: 0.95rem;
+        line-height: 1.4;
       }
 
 
@@ -520,39 +618,57 @@
   </head>
   <body>
     <header>
-      <div class="topline">
-        <span>Friday • November 14, 2025</span>
-        <span>Dow +0.83%</span>
+      <div class="header-top">
+        <div class="header-left">
+          <a href="#" class="today-paper">Today's Paper</a>
+          <span class="date-section">Friday, November 14, 2025</span>
+        </div>
+        <div class="header-right">
+          <div class="market-data">
+            <span class="market-positive">Dow +0.83%</span>
+            <span class="market-positive">S&P +0.45%</span>
+            <span class="market-negative">Nasdaq -0.12%</span>
+          </div>
+          <button class="subscribe-btn">SUBSCRIBE FOR $0.50/WEEK</button>
+          <button class="login-btn">LOG IN</button>
+        </div>
       </div>
+      <div class="header-main">
+      </div>
+      <nav class="section-nav">
+        <a href="#">U.S.</a>
+        <a href="#">World</a>
+        <a href="#">Business</a>
+        <a href="#">Arts</a>
+        <a href="#">Lifestyle</a>
+        <a href="#">Opinion</a>
+        <a href="#">Audio</a>
+        <a href="#">Games</a>
+      </nav>
     </header>
 
-    <div class="ticker">
-      <div class="ticker-track">
-        <span>⚡️ Midnight Market • Crypto steadies as artists launch coins</span>
-        <span>🌈 Style Capsule • Pastel metallics rule winter streetwear</span>
-        <span>🌀 Culture Pulse • Underground zines sell out in hours</span>
-        <span>⚡️ Midnight Market • Crypto steadies as artists launch coins</span>
-        <span>🌈 Style Capsule • Pastel metallics rule winter streetwear</span>
-        <span>🌀 Culture Pulse • Underground zines sell out in hours</span>
-      </div>
-    </div>
-
+    
     <div class="brand-banner">
       <h1 class="brand-name">Buenos Días</h1>
       <p class="brand-subline">Arica, Putre, Valparaíso, Maipú, Concepción, Valdivia, Coyhaique, Punta Arenas</p>
     </div>
 
-    <nav class="section-nav">
-      <a href="#">U.S.</a>
-      <a href="#">World</a>
-      <a href="#">Culture</a>
-      <a href="#">Future</a>
-      <a href="#">Audio</a>
-      <a href="#">Opinión</a>
-    </nav>
-
-    <div class="promo-banner">
-      <strong>Give a gift worth talking about.</strong> Give a year of Buenos Días, plus a free tote.
+    
+    <div class="ticker">
+      <div class="ticker-track">
+        <span>📰 Breaking News • Markets rally as inflation data shows cooling trend</span>
+        <span>🌍 World Update • Climate summit reaches historic agreement on emissions</span>
+        <span>💼 Business • Tech giants face new regulatory challenges in EU</span>
+        <span>🎭 Arts • Museum announces record-breaking exhibition attendance</span>
+        <span>🏃 Lifestyle • Marathon training tips from elite athletes</span>
+        <span>📊 Markets • Dow +0.83% • S&P +0.45% • Nasdaq -0.12%</span>
+        <span>📰 Breaking News • Markets rally as inflation data shows cooling trend</span>
+        <span>🌍 World Update • Climate summit reaches historic agreement on emissions</span>
+        <span>💼 Business • Tech giants face new regulatory challenges in EU</span>
+        <span>🎭 Arts • Museum announces record-breaking exhibition attendance</span>
+        <span>🏃 Lifestyle • Marathon training tips from elite athletes</span>
+        <span>📊 Markets • Dow +0.83% • S&P +0.45% • Nasdaq -0.12%</span>
+      </div>
     </div>
 
     <main>

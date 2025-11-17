@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Article — Buenos Días</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&family=Cormorant:wght@400;600&family=Forum:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0b0c11;
+        --porcelain: #f8f5f0;
+        --warm-gray: #b8aca0;
+        --electric-mint: #2df3c8;
+        --magenta-punch: #ff3d81;
+        --midnight: #03030a;
+        --column-width: 380px;
+        --column-gap: 60px;
+        --page-width: calc(3 * var(--column-width) + 2 * var(--column-gap) + 4rem);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Cormorant', serif;
+        color: var(--ink);
+        background: var(--porcelain);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(248, 245, 240, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(11, 12, 17, 0.08);
+        padding: 1rem 2rem;
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .magazine-title {
+        font-family: 'Forum', serif;
+        font-size: 1.8rem;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: 0;
+      }
+
+      .article-meta {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--warm-gray);
+      }
+
+      .scroll-container {
+        position: relative;
+        margin-top: 80px;
+        height: calc(100vh - 80px);
+        overflow-x: auto;
+        overflow-y: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: var(--warm-gray) transparent;
+      }
+
+      .scroll-container::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .scroll-container::-webkit-scrollbar-thumb {
+        background-color: var(--warm-gray);
+        border-radius: 4px;
+      }
+
+      .page {
+        display: flex;
+        width: max-content;
+        height: 100%;
+      }
+
+      .page-spread {
+        width: var(--page-width);
+        height: calc(100vh - 160px);
+        flex-shrink: 0;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        padding: 3rem 2rem;
+        column-count: 3;
+        column-gap: var(--column-gap);
+        column-fill: auto;
+        overflow-y: auto;
+      }
+
+      .column {
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+      }
+
+      .article-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 600;
+        line-height: 1.2;
+        margin: 0 0 1rem 0;
+        color: var(--ink);
+      }
+
+      .article-subtitle {
+        font-family: 'Cormorant', serif;
+        font-size: 1.3rem;
+        font-weight: 400;
+        line-height: 1.4;
+        margin: 0 0 2rem 0;
+        color: var(--ink);
+        font-style: italic;
+      }
+
+      .drop-cap {
+        float: left;
+        font-size: 4rem;
+        line-height: 3rem;
+        font-weight: 600;
+        margin-right: 0.1rem;
+        margin-top: -0.2rem;
+      }
+
+      .paragraph {
+        text-align: justify;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 0 0 1.2rem 0;
+        text-indent: 1rem;
+      }
+
+      .paragraph:first-of-type {
+        text-indent: 0;
+      }
+
+      .heading {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 1.5rem 0 1rem 0;
+        color: var(--ink);
+      }
+
+      .subheading {
+        font-family: 'Cormorant', serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 1.2rem 0 0.8rem 0;
+        color: var(--ink);
+      }
+
+      .image {
+        width: 100%;
+        margin: 1rem 0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .image img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .image-caption {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.75rem;
+        text-align: center;
+        margin-top: 0.5rem;
+        color: var(--warm-gray);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .pull-quote {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-style: italic;
+        line-height: 1.3;
+        margin: 2rem 0;
+        padding-left: 1rem;
+        border-left: 3px solid var(--ink);
+        color: var(--ink);
+      }
+
+      .byline {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: 1rem 0 2rem 0;
+        color: var(--warm-gray);
+      }
+
+      .page-indicator {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 50;
+        background: rgba(248, 245, 240, 0.9);
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        border: 1px solid rgba(11, 12, 17, 0.1);
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--warm-gray);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .dot.active {
+        background: var(--ink);
+        width: 24px;
+        border-radius: 4px;
+      }
+
+      .dot:hover {
+        background: var(--magenta-punch);
+      }
+
+      .navigation-hint {
+        position: fixed;
+        bottom: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--warm-gray);
+        opacity: 0.7;
+        z-index: 40;
+      }
+
+      @media (max-width: 1200px) {
+        :root {
+          --column-width: 320px;
+          --column-gap: 40px;
+        }
+        
+        .page-spread {
+          padding: 2rem 1rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .scroll-container {
+          scroll-snap-type: none;
+        }
+        
+        .page {
+          flex-direction: column;
+        }
+        
+        .page-spread {
+          width: 100%;
+          height: auto;
+          flex-direction: column;
+          padding: 1rem;
+        }
+        
+        .column {
+          width: 100%;
+        }
+        
+        body {
+          overflow-x: hidden;
+        }
+        
+        .page-indicator,
+        .navigation-hint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <h1 class="magazine-title">Buenos Días</h1>
+        <div class="article-meta">November 15, 2025 • Feature</div>
+      </div>
+    </header>
+
+    <div class="scroll-container" id="scrollContainer">
+      <div class="page">
+        <!-- Page 1: Opening -->
+        <div class="page-spread">
+          <div class="column">
+            <h2 class="article-title">The Architecture of Memory</h2>
+            <p class="article-subtitle">How cities remember what we try to forget</p>
+            <div class="byline">By Isabella Rodriguez</div>
+            <p class="paragraph">
+              <span class="drop-cap">T</span>he first thing you notice about Santiago's forgotten district isn't the crumbling facades or the weeds pushing through pavement cracks, but the silence. It's a particular kind of quiet that settles over places where stories have stopped being told, where the usual hum of daily life has been replaced by the whisper of wind through broken windowpanes.
+            </p>
+            <p class="paragraph">
+              This silence has become my study, my obsession, my constant companion over the past three years as I've documented the slow erosion of urban memory. What began as a photographic project has evolved into something far more complex—an investigation into how cities hold onto their secrets, and what happens when those secrets begin to surface.
+            </p>
+          </div>
+          
+          <div class="column">
+            <p class="paragraph">
+              The architecture of forgetting is remarkably consistent across cultures and climates. Whether you're wandering through the abandoned industrial zones of Detroit or the ghost towns of the Atacama Desert, the same patterns emerge: first the neglect, then the nature's gradual reclamation, and finally, the strange beauty that emerges from decay.
+            </p>
+            <div class="image">
+              <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=800&q=80" alt="Abandoned building facade">
+              <div class="image-caption">Former textile factory, Santiago, 2023</div>
+            </div>
+            <p class="paragraph">
+              "Buildings remember everything," architect Maria González told me during our first meeting in her sun-drenched office overlooking Plaza de Armas. "They remember the weight of the bodies that moved through them, the sound of voices that filled their halls, the dreams that were dreamed within their walls. We humans forget so easily, but stone and steel have longer memories."
+            </p>
+          </div>
+          
+          <div class="column">
+            <h3 class="heading">The Language of Ruins</h3>
+            <p class="paragraph">
+              González has spent her career studying what she calls "the archaeology of the recent past"—the discipline of reading contemporary ruins like ancient texts. Her work has taken her from the abandoned mining towns of the Atacama to the half-finished Olympic venues of Rio de Janeiro, each site telling its own story of ambition, failure, and transformation.
+            </p>
+            <div class="pull-quote">
+              "We don't abandon places, we abandon versions of ourselves."
+            </div>
+            <p class="paragraph">
+              What fascinates her most is not the abandonment itself, but what comes after. "Nature is the ultimate artist of decay," she explains, gesturing to a series of photographs on her wall showing vines creeping through factory windows, roots breaking through concrete floors, wildflowers blooming in abandoned ballrooms. "It doesn't judge or moralize. It simply transforms."
+            </p>
+          </div>
+        </div>
+
+        <!-- Page 2: Development -->
+        <div class="page-spread">
+          <div class="column">
+            <h3 class="heading">The Digital Ghost</h3>
+            <p class="paragraph">
+              In an age of digital preservation, the physical abandonment of places takes on new significance. While we archive tweets and save Instagram stories, entire neighborhoods disappear without a trace. This paradox sits at the heart of contemporary urban studies: we have more ways to remember than ever before, yet we seem to be forgetting faster.
+            </p>
+            <p class="paragraph">
+              The rise of "digital ghost towns"—online spaces that were once vibrant communities but now exist only as archived data—parallels their physical counterparts. Both speak to our complicated relationship with permanence and progress, both serve as monuments to versions of ourselves we've outgrown.
+            </p>
+            <div class="image">
+              <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80" alt="Data center servers">
+              <div class="image-caption">Digital preservation facility, 2024</div>
+            </div>
+          </div>
+          
+          <div class="column">
+            <p class="paragraph">
+              "Every abandoned building is a failed utopia," says urban theorist James Chen, speaking from his office at MIT's Media Lab. "Someone once imagined a future there—workers in factories, families in homes, students in classrooms. When those futures don't materialize, the buildings become monuments to alternative possibilities."
+            </p>
+            <h4 class="subheading">The Economics of Memory</h4>
+            <p class="paragraph">
+              Chen's research focuses on the economic implications of urban abandonment, a field that has gained urgency as climate change and economic disruption accelerate the pace of community loss. What he's discovered challenges conventional wisdom about progress and development.
+            </p>
+            <p class="paragraph">
+              "We assume that abandonment represents failure, but what if it represents adaptation?" he asks, pulling up satellite images showing how abandoned industrial areas often become biodiversity hotspots. "Cities are living systems, and like all living systems, they need to be able to shed what no longer serves them."
+            </p>
+          </div>
+          
+          <div class="column">
+            <div class="pull-quote">
+              "The most honest architecture is the architecture that admits its own temporality."
+            </div>
+            <p class="paragraph">
+              This perspective has influenced a new generation of architects and urban planners who are designing for what they call "planned obsolescence"—buildings and neighborhoods meant to be easily transformed or reclaimed by nature as needs change.
+            </p>
+            <p class="paragraph">
+              The movement represents a radical departure from the modernist obsession with permanence. Instead of fighting against time and entropy, these designers work with them, creating spaces that acknowledge their own temporality and celebrate the beauty of transformation.
+            </p>
+            <h4 class="subheading">Learning from Ruins</h4>
+            <p class="paragraph">
+              Perhaps the most valuable lesson abandoned places teach us is about humility. They remind us that our grandest plans are always subject to forces beyond our control, that the cities we build will ultimately be shaped by time, nature, and the unpredictable currents of human desire.
+            </p>
+          </div>
+        </div>
+
+        <!-- Page 3: Conclusion -->
+        <div class="page-spread">
+          <div class="column">
+            <h3 class="heading">The Future of Forgetting</h3>
+            <p class="paragraph">
+              As I prepare to conclude my documentation of Santiago's forgotten district, I find myself wondering about its future. Will it be redeveloped into luxury condos, becoming another monument to gentrification? Will it be preserved as a heritage site, frozen in time for tourists to photograph? Or will it continue its slow conversation with nature, becoming something entirely unexpected?
+            </p>
+            <p class="paragraph">
+              The answer, I suspect, lies in understanding that abandonment is not an end state but a transition. These places are not dead—they are simply waiting for their next chapter, whether that chapter is written by developers, artists, ecologists, or the relentless patience of time.
+            </p>
+          </div>
+          
+          <div class="column">
+            <div class="image">
+              <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80" alt="Nature reclaiming abandoned space">
+              <div class="image-caption">Nature's reclamation, five years after abandonment</div>
+            </div>
+            <p class="paragraph">
+              What I've learned from three years of documenting these spaces is that memory is not something we preserve but something we participate in. Every photograph I've taken, every story I've recorded, becomes part of the place's ongoing narrative. The act of remembering changes what is remembered.
+            </p>
+            <h4 class="subheading">A New Kind of Preservation</h4>
+            <p class="paragraph">
+              Perhaps the future of urban preservation lies not in freezing places in time but in documenting their transformations. Instead of fighting against decay, we might learn to read it, to understand it as a form of communication rather than destruction.
+            </p>
+          </div>
+          
+          <div class="column">
+            <p class="paragraph">
+              The architecture of memory, I've come to understand, is not built from stone and steel but from the stories we tell and the attention we pay. Every abandoned place contains infinite stories waiting to be read, if only we know how to look.
+            </p>
+            <div class="pull-quote">
+              "To remember is to participate in the ongoing conversation between past and future."
+            </div>
+            <p class="paragraph">
+              As I pack up my camera equipment for the final time, I take one last walk through the district's silent streets. The light is golden, the air thick with the scent of wild jasmine and decay. In the distance, I can hear the sounds of the vibrant city that surrounds this quiet pocket of forgotten time.
+            </p>
+            <p class="paragraph">
+              The silence here is not empty—it's full of stories, waiting for someone to listen. And in that waiting, there is a kind of hope, a reminder that even in abandonment, there is the possibility of renewal, that even in forgetting, there is the promise of remembering.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navigation-hint">Scroll or swipe to navigate</div>
+    
+    <div class="page-indicator">
+      <div class="dot active" data-page="0"></div>
+      <div class="dot" data-page="1"></div>
+      <div class="dot" data-page="2"></div>
+    </div>
+
+    <script>
+      const scrollContainer = document.getElementById('scrollContainer');
+      const dots = document.querySelectorAll('.dot');
+      const pageSpreads = document.querySelectorAll('.page-spread');
+      
+      // Update page indicator on scroll
+      scrollContainer.addEventListener('scroll', () => {
+        const scrollLeft = scrollContainer.scrollLeft;
+        const pageSpreadWidth = pageSpreads[0].offsetWidth;
+        const currentIndex = Math.round(scrollLeft / pageSpreadWidth);
+        
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentIndex);
+        });
+      });
+      
+      // Navigate to page on dot click
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          const pageSpreadWidth = pageSpreads[0].offsetWidth;
+          scrollContainer.scrollTo({
+            left: index * pageSpreadWidth,
+            behavior: 'smooth'
+          });
+        });
+      });
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        const pageSpreadWidth = pageSpreads[0].offsetWidth;
+        const currentScroll = scrollContainer.scrollLeft;
+        
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          scrollContainer.scrollTo({
+            left: currentScroll + pageSpreadWidth,
+            behavior: 'smooth'
+          });
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          scrollContainer.scrollTo({
+            left: Math.max(0, currentScroll - pageSpreadWidth),
+            behavior: 'smooth'
+          });
+        }
+      });
+      
+      // Touch/swipe support for mobile
+      let touchStartX = 0;
+      let touchEndX = 0;
+      
+      scrollContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+      
+      scrollContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+      
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        const pageSpreadWidth = pageSpreads[0].offsetWidth;
+        const currentScroll = scrollContainer.scrollLeft;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            // Swipe left - next page
+            scrollContainer.scrollTo({
+              left: currentScroll + pageSpreadWidth,
+              behavior: 'smooth'
+            });
+          } else {
+            // Swipe right - previous page
+            scrollContainer.scrollTo({
+              left: Math.max(0, currentScroll - pageSpreadWidth),
+              behavior: 'smooth'
+            });
+          }
+        }
+      }
+      
+      // Hide navigation hint after first interaction
+      let hasInteracted = false;
+      function hideHint() {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          document.querySelector('.navigation-hint').style.opacity = '0';
+          setTimeout(() => {
+            document.querySelector('.navigation-hint').style.display = 'none';
+          }, 300);
+        }
+      }
+      
+      scrollContainer.addEventListener('scroll', hideHint);
+      scrollContainer.addEventListener('wheel', hideHint);
+      scrollContainer.addEventListener('touchend', hideHint);
+      
+      // Wheel event for smooth horizontal scrolling
+      let isScrolling = false;
+      let lastWheelTime = 0;
+      let accumulatedDelta = 0;
+      let hasStartedScrolling = false;
+      
+      scrollContainer.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        
+        const wheelDelta = Math.abs(e.deltaY);
+        const currentTime = Date.now();
+        const timeSinceLastScroll = currentTime - lastWheelTime;
+        
+        // Accumulate scroll delta for full page transition
+        accumulatedDelta += wheelDelta;
+        
+        // Immediate visual feedback on first scroll
+        if (!hasStartedScrolling && wheelDelta > 10) {
+          hasStartedScrolling = true;
+          const pageSpreadWidth = pageSpreads[0].offsetWidth;
+          const currentScroll = scrollContainer.scrollLeft;
+          const scrollDirection = e.deltaY > 0 ? 1 : -1;
+          
+          // Small immediate movement for responsiveness
+          const smallMovement = scrollDirection * 30;
+          scrollContainer.scrollTo({
+            left: currentScroll + smallMovement,
+            behavior: 'smooth'
+          });
+        }
+        
+        // Full page transition after accumulated threshold
+        if (isScrolling || accumulatedDelta < 100 || timeSinceLastScroll < 300) return;
+        
+        const pageSpreadWidth = pageSpreads[0].offsetWidth;
+        const currentScroll = scrollContainer.scrollLeft;
+        const scrollDirection = e.deltaY > 0 ? 1 : -1;
+        
+        // Calculate target position
+        const currentPage = Math.round(currentScroll / pageSpreadWidth);
+        const targetPage = Math.max(0, Math.min(pageSpreads.length - 1, currentPage + scrollDirection));
+        const targetScroll = targetPage * pageSpreadWidth;
+        
+        isScrolling = true;
+        lastWheelTime = currentTime;
+        accumulatedDelta = 0;
+        hasStartedScrolling = false;
+        
+        scrollContainer.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth'
+        });
+        
+        setTimeout(() => {
+          isScrolling = false;
+        }, 800);
+      });
+    </script>
+  </body>
+</html>

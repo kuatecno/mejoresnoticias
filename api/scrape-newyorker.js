@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const { scrapeLatestNews } = require('../lib/newyorkerScraper');
 const { initSchema, saveArticles } = require('../lib/db');
 

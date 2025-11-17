@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buenos Días - Article Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&family=Cormorant:wght@400;600&family=Forum:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #000000;
+            --porcelain: #ffffff;
+            --warm-gray: #666666;
+            --light-gray: #f7f7f7;
+            --border-gray: #e2e2e2;
+            --text-gray: #333333;
+            --nyt-blue: #326891;
+            --market-green: #56a363;
+            --market-red: #b32824;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            color: var(--ink);
+            background: var(--porcelain);
+            line-height: 1.5;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--porcelain);
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 2rem;
+            font-size: 0.7rem;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Forum', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .section-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.25rem 2rem;
+            border-bottom: 1px solid var(--border-gray);
+            background: var(--porcelain);
+            font-size: 0.8rem;
+            width: 100%;
+        }
+
+        .section-nav a {
+            font-family: 'Space Grotesk', sans-serif;
+            text-decoration: none;
+            color: var(--text-gray);
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
+
+        .section-nav a:hover {
+            color: var(--ink);
+            text-decoration: underline;
+        }
+
+        .filters {
+            padding: 1rem 2rem;
+            background: var(--light-gray);
+            border-bottom: 1px solid var(--border-gray);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            min-width: 300px;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .stats {
+            padding: 1rem 2rem;
+            background: white;
+            border-bottom: 1px solid var(--border-gray);
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .stat-label {
+            color: var(--warm-gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        main {
+            padding: 1rem 2rem;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .article-card {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .article-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--nyt-blue);
+        }
+
+        .article-title {
+            font-family: 'Cormorant', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.2;
+            color: var(--ink);
+        }
+
+        .article-description {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 0 0 1rem 0;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--warm-gray);
+        }
+
+        .body-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .body-available {
+            background: var(--market-green);
+            color: white;
+        }
+
+        .body-unavailable {
+            background: var(--market-red);
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-gray);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--light-gray);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: var(--warm-gray);
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--warm-gray);
+        }
+
+        .article-body {
+            font-family: 'Cormorant', serif;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: var(--text-gray);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--warm-gray);
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: var(--market-red);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-left">
+                <span>Article Dashboard</span>
+            </div>
+            <div class="header-right">
+                <span id="lastUpdated">Loading...</span>
+            </div>
+        </div>
+        <div class="header-main">
+            <a href="#" class="logo">Buenos Días</a>
+        </div>
+        <nav class="section-nav">
+            <a href="#" onclick="refreshData()">Refresh</a>
+            <a href="#" onclick="exportData()">Export</a>
+            <a href="http://localhost:8000/index.html">Main Site</a>
+        </nav>
+    </header>
+
+    <div class="filters">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search articles...">
+        <select class="filter-select" id="bodyFilter">
+            <option value="">All Articles</option>
+            <option value="true">With Full Body</option>
+            <option value="false">Without Body</option>
+        </select>
+        <button onclick="applyFilters()" style="padding: 0.5rem 1rem; border: 1px solid var(--border-gray); background: white; border-radius: 4px; cursor: pointer;">Apply Filters</button>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-item">
+            <span class="stat-value" id="totalArticles">-</span>
+            <span class="stat-label">Total Articles</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="withBody">-</span>
+            <span class="stat-label">With Full Body</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value" id="withoutBody">-</span>
+            <span class="stat-label">Without Body</span>
+        </div>
+    </div>
+
+    <main>
+        <div id="loading" class="loading">Loading articles...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="articlesContainer" class="articles-grid" style="display: none;"></div>
+        <div id="pagination" class="pagination" style="display: none;"></div>
+    </main>
+
+    <div id="articleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalTitle" class="article-title"></h2>
+                    <p id="modalMeta" style="color: var(--warm-gray); font-size: 0.9rem; margin-top: 0.5rem;"></p>
+                </div>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody" class="article-body"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentFilters = {};
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                
+                document.getElementById('totalArticles').textContent = stats.total;
+                document.getElementById('withBody').textContent = stats.with_body;
+                document.getElementById('withoutBody').textContent = stats.without_body;
+            } catch (err) {
+                console.error('Error loading stats:', err);
+            }
+        }
+
+        async function loadArticles(page = 1, filters = {}) {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const container = document.getElementById('articlesContainer');
+            const pagination = document.getElementById('pagination');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            container.style.display = 'none';
+            pagination.style.display = 'none';
+
+            try {
+                const params = new URLSearchParams({
+                    page: page,
+                    limit: 12,
+                    ...filters
+                });
+
+                const response = await fetch(`/api/articles?${params}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayArticles(data.articles);
+                    displayPagination(data.pagination);
+                    currentPage = page;
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (err) {
+                error.textContent = `Error: ${err.message}`;
+                error.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayArticles(articles) {
+            const container = document.getElementById('articlesContainer');
+            
+            container.innerHTML = articles.map(article => `
+                <div class="article-card" onclick="openArticle(${article.id})">
+                    <h3 class="article-title">${article.title || 'No Title'}</h3>
+                    <p class="article-description">${article.description || 'No description available'}</p>
+                    <div class="article-meta">
+                        <span>${new Date(article.published_at || article.scraped_at).toLocaleDateString()}</span>
+                        <span class="body-badge ${article.body_available ? 'body-available' : 'body-unavailable'}">
+                            ${article.body_available ? 'Full Body' : 'Metadata Only'}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.style.display = 'grid';
+        }
+
+        function displayPagination(pagination) {
+            const container = document.getElementById('pagination');
+            
+            container.innerHTML = `
+                <button onclick="loadArticles(${pagination.page - 1}, currentFilters)" ${pagination.page <= 1 ? 'disabled' : ''}>
+                    Previous
+                </button>
+                <span class="page-info">Page ${pagination.page} of ${pagination.pages}</span>
+                <button onclick="loadArticles(${pagination.page + 1}, currentFilters)" ${pagination.page >= pagination.pages ? 'disabled' : ''}>
+                    Next
+                </button>
+            `;
+            
+            container.style.display = 'flex';
+        }
+
+        async function openArticle(id) {
+            try {
+                const response = await fetch(`/api/articles/${id}`);
+                const article = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('modalTitle').textContent = article.title || 'No Title';
+                    document.getElementById('modalMeta').innerHTML = `
+                        Published: ${article.published_at ? new Date(article.published_at).toLocaleDateString() : 'Unknown'}<br>
+                        URL: <a href="${article.url}" target="_blank">${article.url}</a>
+                    `;
+                    
+                    const bodyElement = document.getElementById('modalBody');
+                    if (article.body_available && article.body_text) {
+                        bodyElement.textContent = article.body_text;
+                    } else {
+                        bodyElement.innerHTML = '<em>Full article body not available (paywall or restricted content)</em>';
+                    }
+                    
+                    document.getElementById('articleModal').style.display = 'block';
+                } else {
+                    alert('Failed to load article');
+                }
+            } catch (err) {
+                alert('Error loading article: ' + err.message);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('articleModal').style.display = 'none';
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value;
+            const withBody = document.getElementById('bodyFilter').value;
+            
+            currentFilters = {};
+            if (search) currentFilters.search = search;
+            if (withBody) currentFilters.withBody = withBody;
+            
+            loadArticles(1, currentFilters);
+        }
+
+        function refreshData() {
+            loadStats();
+            loadArticles(1, currentFilters);
+        }
+
+        function exportData() {
+            window.open('/api/articles?limit=1000', '_blank');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('articleModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            loadArticles();
+            
+            // Update last updated time
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+services:
+  # PostgreSQL Database
+  - type: postgres
+    name: news-db
+    plan: free
+    databaseName: mejoresnoticias
+    user: admin
+    
+  # Scraper Service (runs as cron jobs)
+  - type: worker
+    name: news-scraper
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node api/scrape-all.js"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: news-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: FIGMA_API_KEY
+        sync: false
+        
+  # AI Processing Service
+  - type: web
+    name: ai-processor
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node ai/processor.js"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: news-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+
+# Cron Jobs for multiple news sites
+cronJobs:
+  - name: scrape-newyorker-morning
+    schedule: "0 6 * * *"
+    service: news-scraper
+    command: "node api/scrape-newyorker.js"
+    
+  - name: scrape-newyorker-noon
+    schedule: "0 12 * * *"
+    service: news-scraper
+    command: "node api/scrape-newyorker.js"
+    
+  - name: scrape-newyorker-evening
+    schedule: "0 18 * * *"
+    service: news-scraper
+    command: "node api/scrape-newyorker.js"
+    
+  - name: scrape-newyorker-night
+    schedule: "0 0 * * *"
+    service: news-scraper
+    command: "node api/scrape-newyorker.js"
+    
+  # Future: Add more news sources
+  - name: process-ai-content
+    schedule: "30 */2 * * *"
+    service: ai-processor
+    command: "node ai/select-and-generate.js"
