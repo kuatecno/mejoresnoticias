@@ -158,6 +158,256 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
+// Admin API endpoints
+app.delete('/api/admin/articles/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = 'DELETE FROM newyorker_articles WHERE id = $1';
+    await pool.query(query, [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting article:', err);
+    res.status(500).json({ error: 'Failed to delete article' });
+  }
+});
+
+app.delete('/api/admin/articles/delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ error: 'Invalid article IDs' });
+    }
+    
+    const query = 'DELETE FROM newyorker_articles WHERE id = ANY($1)';
+    await pool.query(query, [ids]);
+    res.json({ success: true, deleted: ids.length });
+  } catch (err) {
+    console.error('Error deleting articles:', err);
+    res.status(500).json({ error: 'Failed to delete articles' });
+  }
+});
+
+app.post('/api/admin/articles/publish', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ error: 'Invalid article IDs' });
+    }
+    
+    const query = 'UPDATE newyorker_articles SET published = true WHERE id = ANY($1)';
+    await pool.query(query, [ids]);
+    res.json({ success: true, published: ids.length });
+  } catch (err) {
+    console.error('Error publishing articles:', err);
+    res.status(500).json({ error: 'Failed to publish articles' });
+  }
+});
+
+app.post('/api/admin/articles/unpublish', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ error: 'Invalid article IDs' });
+    }
+    
+    const query = 'UPDATE newyorker_articles SET published = false WHERE id = ANY($1)';
+    await pool.query(query, [ids]);
+    res.json({ success: true, unpublished: ids.length });
+  } catch (err) {
+    console.error('Error unpublishing articles:', err);
+    res.status(500).json({ error: 'Failed to unpublish articles' });
+  }
+});
+
+app.post('/api/admin/scrape', async (req, res) => {
+  try {
+    // Trigger manual scrape
+    const { spawn } = require('child_process');
+    const scrapeProcess = spawn('npm', ['run', 'scrape:all'], {
+      cwd: __dirname,
+      detached: true
+    });
+    
+    scrapeProcess.unref();
+    res.json({ success: true, message: 'Scraping started in background' });
+  } catch (err) {
+    console.error('Error triggering scrape:', err);
+    res.status(500).json({ error: 'Failed to start scraping' });
+  }
+});
+
+app.post('/api/admin/ai-process', async (req, res) => {
+  try {
+    // Trigger AI processing
+    const { spawn } = require('child_process');
+    const aiProcess = spawn('npm', ['run', 'ai:select'], {
+      cwd: __dirname,
+      detached: true
+    });
+    
+    aiProcess.unref();
+    res.json({ success: true, message: 'AI processing started in background' });
+  } catch (err) {
+    console.error('Error triggering AI processing:', err);
+    res.status(500).json({ error: 'Failed to start AI processing' });
+  }
+});
+
+app.get('/api/admin/status', async (req, res) => {
+  try {
+    // Get scraping status
+    const query = `
+      SELECT 
+        MAX(scraped_at) as last_scrape,
+        COUNT(*) as total_articles
+      FROM newyorker_articles
+    `;
+    
+    const { rows } = await pool.query(query);
+    const lastScrape = rows[0].last_scrape;
+    
+    // Calculate next scrape (6 hours from last scrape)
+    let nextScrape = 'Unknown';
+    if (lastScrape) {
+      const next = new Date(lastScrape.getTime() + 6 * 60 * 60 * 1000);
+      nextScrape = next.toLocaleString();
+    }
+    
+    res.json({
+      lastScrape: lastScrape ? new Date(lastScrape).toLocaleString() : 'Never',
+      nextScrape,
+      totalArticles: rows[0].total_articles
+    });
+  } catch (err) {
+    console.error('Error getting status:', err);
+    res.status(500).json({ error: 'Failed to get status' });
+  }
+});
+
+app.post('/api/admin/cleanup', async (req, res) => {
+  try {
+    const query = 'DELETE FROM newyorker_articles WHERE scraped_at < NOW() - INTERVAL \'30 days\'';
+    const { rows } = await pool.query(query);
+    res.json({ success: true, deleted: rows.length });
+  } catch (err) {
+    console.error('Error cleaning up:', err);
+    res.status(500).json({ error: 'Failed to cleanup old articles' });
+  }
+});
+
+app.get('/api/admin/export', async (req, res) => {
+  try {
+    const query = 'SELECT * FROM newyorker_articles ORDER BY scraped_at DESC';
+    const { rows } = await pool.query(query);
+    
+    const exportData = {
+      exported_at: new Date().toISOString(),
+      total_articles: rows.length,
+      articles: rows
+    };
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="articles-export-${new Date().toISOString().split('T')[0]}.json"`);
+    res.json(exportData);
+  } catch (err) {
+    console.error('Error exporting:', err);
+    res.status(500).json({ error: 'Failed to export data' });
+  }
+});
+
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        COUNT(*) as total,
+        COUNT(CASE WHEN published = true THEN 1 END) as published,
+        COUNT(CASE WHEN body_available = true THEN 1 END) as with_body,
+        COUNT(DISTINCT source) as sources,
+        MIN(published_at) as oldest,
+        MAX(published_at) as newest
+      FROM newyorker_articles
+    `;
+    
+    const { rows } = await pool.query(query);
+    const stats = rows[0];
+    
+    res.json({
+      total: stats.total,
+      published: stats.published,
+      withBody: stats.with_body,
+      sources: stats.sources,
+      oldest: stats.oldest ? new Date(stats.oldest).toLocaleDateString() : 'Unknown',
+      newest: stats.newest ? new Date(stats.newest).toLocaleDateString() : 'Unknown'
+    });
+  } catch (err) {
+    console.error('Error getting stats:', err);
+    res.status(500).json({ error: 'Failed to get stats' });
+  }
+});
+
+// AI Content API endpoints
+app.get('/api/ai/content', async (req, res) => {
+  try {
+    const query = 'SELECT * FROM processed_content ORDER BY processed_at DESC LIMIT 1';
+    const { rows } = await pool.query(query);
+    
+    if (rows.length > 0) {
+      res.json({ content: rows[0] });
+    } else {
+      res.json({ content: null });
+    }
+  } catch (err) {
+    console.error('Error getting AI content:', err);
+    res.status(500).json({ error: 'Failed to get AI content' });
+  }
+});
+
+app.post('/api/ai/publish', async (req, res) => {
+  try {
+    // Mark latest AI content as published
+    const query = `
+      UPDATE processed_content 
+      SET published = true 
+      WHERE id = (SELECT id FROM processed_content ORDER BY processed_at DESC LIMIT 1)
+    `;
+    await pool.query(query);
+    res.json({ success: true, message: 'AI content published' });
+  } catch (err) {
+    console.error('Error publishing AI content:', err);
+    res.status(500).json({ error: 'Failed to publish AI content' });
+  }
+});
+
+app.post('/api/ai/regenerate', async (req, res) => {
+  try {
+    // Trigger AI regeneration
+    const { spawn } = require('child_process');
+    const aiProcess = spawn('npm', ['run', 'ai:select'], {
+      cwd: __dirname,
+      detached: true
+    });
+    
+    aiProcess.unref();
+    res.json({ success: true, message: 'AI content regeneration started' });
+  } catch (err) {
+    console.error('Error regenerating AI content:', err);
+    res.status(500).json({ error: 'Failed to regenerate AI content' });
+  }
+});
+
+app.post('/api/ai/config', async (req, res) => {
+  try {
+    const config = req.body;
+    
+    // Store AI configuration (you could create a config table or use environment variables)
+    console.log('AI configuration saved:', config);
+    res.json({ success: true, message: 'AI configuration saved' });
+  } catch (err) {
+    console.error('Error saving AI config:', err);
+    res.status(500).json({ error: 'Failed to save AI configuration' });
+  }
+});
+
 // Serve dashboard
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));

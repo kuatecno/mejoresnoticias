@@ -301,6 +301,183 @@
             padding: 2rem;
             color: var(--market-red);
         }
+
+        /* Admin Styles */
+        .tab-content {
+            display: block;
+        }
+
+        .admin-section {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-section h2 {
+            margin: 0 0 1rem 0;
+            font-family: 'Cormorant', serif;
+            font-size: 1.5rem;
+            color: var(--ink);
+        }
+
+        .admin-controls, .scraping-controls, .db-controls, .ai-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .admin-btn:hover {
+            background: var(--light-gray);
+        }
+
+        .admin-btn.danger {
+            background: var(--market-red);
+            color: white;
+            border-color: var(--market-red);
+        }
+
+        .admin-btn.danger:hover {
+            background: #d32f2f;
+        }
+
+        .admin-btn.success {
+            background: var(--market-green);
+            color: white;
+            border-color: var(--market-green);
+        }
+
+        .admin-btn.success:hover {
+            background: #4caf50;
+        }
+
+        .admin-btn.warning {
+            background: #ff9800;
+            color: white;
+            border-color: #ff9800;
+        }
+
+        .admin-btn.warning:hover {
+            background: #f57c00;
+        }
+
+        .admin-table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .admin-table th {
+            background: var(--light-gray);
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-gray);
+            font-weight: 600;
+        }
+
+        .admin-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .admin-table tr:hover {
+            background: #fafafa;
+        }
+
+        .scraping-status {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: var(--warm-gray);
+            margin-top: 0.5rem;
+        }
+
+        .ai-content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .ai-article-card {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .ai-article-card h4 {
+            margin: 0 0 0.5rem 0;
+            font-family: 'Cormorant', serif;
+            font-size: 1.1rem;
+        }
+
+        .ai-article-card .ai-score {
+            background: var(--nyt-blue);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .ai-config {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .config-item label {
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+
+        .config-item input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            max-width: 200px;
+        }
+
+        .category-checkboxes {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .category-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: normal;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -319,6 +496,9 @@
         <nav class="section-nav">
             <a href="#" onclick="refreshData()">Refresh</a>
             <a href="#" onclick="exportData()">Export</a>
+            <a href="#" onclick="showTab('articles')">Articles</a>
+            <a href="#" onclick="showTab('admin')">Manage</a>
+            <a href="#" onclick="showTab('ai')">AI Content</a>
             <a href="http://localhost:8000/index.html">Main Site</a>
         </nav>
     </header>
@@ -349,10 +529,107 @@
     </div>
 
     <main>
-        <div id="loading" class="loading">Loading articles...</div>
-        <div id="error" class="error" style="display: none;"></div>
-        <div id="articlesContainer" class="articles-grid" style="display: none;"></div>
-        <div id="pagination" class="pagination" style="display: none;"></div>
+        <!-- Articles Tab -->
+        <div id="articlesTab" class="tab-content">
+            <div id="loading" class="loading">Loading articles...</div>
+            <div id="error" class="error" style="display: none;"></div>
+            <div id="articlesContainer" class="articles-grid" style="display: none;"></div>
+            <div id="pagination" class="pagination" style="display: none;"></div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="adminTab" class="tab-content" style="display: none;">
+            <div class="admin-section">
+                <h2>Article Management</h2>
+                <div class="admin-controls">
+                    <button onclick="deleteSelectedArticles()" class="admin-btn danger">Delete Selected</button>
+                    <button onclick="publishSelectedArticles()" class="admin-btn success">Publish Selected</button>
+                    <button onclick="unpublishSelectedArticles()" class="admin-btn warning">Unpublish Selected</button>
+                    <button onclick="refreshAdminList()" class="admin-btn">Refresh List</button>
+                </div>
+                
+                <div class="admin-table-container">
+                    <table id="adminArticlesTable" class="admin-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" onchange="toggleAllArticles()"></th>
+                                <th>Title</th>
+                                <th>Source</th>
+                                <th>Published</th>
+                                <th>Body</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminArticlesBody">
+                            <tr><td colspan="6" class="loading">Loading articles...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h2>Scraping Control</h2>
+                <div class="scraping-controls">
+                    <button onclick="triggerManualScrape()" class="admin-btn">Manual Scrape Now</button>
+                    <button onclick="triggerAIProcessing()" class="admin-btn">AI Process Now</button>
+                    <div class="scraping-status" id="scrapingStatus">
+                        <span>Last scrape: <span id="lastScrapeTime">Unknown</span></span>
+                        <span>Next scrape: <span id="nextScrapeTime">Unknown</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h2>Database Operations</h2>
+                <div class="db-controls">
+                    <button onclick="clearOldArticles()" class="admin-btn danger">Clear Articles Older Than 30 Days</button>
+                    <button onclick="exportDatabase()" class="admin-btn">Export Database</button>
+                    <button onclick="showDatabaseStats()" class="admin-btn">Database Stats</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Content Tab -->
+        <div id="aiTab" class="tab-content" style="display: none;">
+            <div class="ai-section">
+                <h2>AI-Selected Content</h2>
+                <div class="ai-controls">
+                    <button onclick="refreshAIContent()" class="admin-btn">Refresh AI Content</button>
+                    <button onclick="publishAISelection()" class="admin-btn success">Publish AI Selection</button>
+                    <button onclick="regenerateAIContent()" class="admin-btn">Regenerate AI Content</button>
+                </div>
+                
+                <div id="aiContentContainer" class="ai-content-grid">
+                    <div class="loading">Loading AI content...</div>
+                </div>
+            </div>
+
+            <div class="ai-section">
+                <h2>AI Configuration</h2>
+                <div class="ai-config">
+                    <div class="config-item">
+                        <label>Quality Threshold:</label>
+                        <input type="number" id="qualityThreshold" min="1" max="10" value="7">
+                    </div>
+                    <div class="config-item">
+                        <label>Max Articles per Day:</label>
+                        <input type="number" id="maxArticles" min="5" max="50" value="10">
+                    </div>
+                    <div class="config-item">
+                        <label>Categories:</label>
+                        <div class="category-checkboxes">
+                            <label><input type="checkbox" value="politics" checked> Politics</label>
+                            <label><input type="checkbox" value="culture" checked> Culture</label>
+                            <label><input type="checkbox" value="business" checked> Business</label>
+                            <label><input type="checkbox" value="international" checked> International</label>
+                            <label><input type="checkbox" value="lifestyle" checked> Lifestyle</label>
+                            <label><input type="checkbox" value="opinion" checked> Opinion</label>
+                        </div>
+                    </div>
+                    <button onclick="saveAIConfig()" class="admin-btn">Save Configuration</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <div id="articleModal" class="modal">
@@ -508,7 +785,360 @@
             window.open('/api/articles?limit=1000', '_blank');
         }
 
-        // Close modal when clicking outside
+        // Tab navigation
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + 'Tab').style.display = 'block';
+    
+    // Load content for specific tabs
+    if (tabName === 'admin') {
+        loadAdminArticles();
+    } else if (tabName === 'ai') {
+        loadAIContent();
+    }
+}
+
+// Admin functions
+async function loadAdminArticles() {
+    try {
+        const response = await fetch('/api/articles?limit=100');
+        const data = await response.json();
+        
+        const tbody = document.getElementById('adminArticlesBody');
+        tbody.innerHTML = data.articles.map(article => `
+            <tr>
+                <td><input type="checkbox" class="article-checkbox" value="${article.id}"></td>
+                <td><a href="#" onclick="openArticle(${article.id})">${article.title || 'No Title'}</a></td>
+                <td>${article.source || 'newyorker'}</td>
+                <td>${article.published_at ? new Date(article.published_at).toLocaleDateString() : 'Unknown'}</td>
+                <td><span class="body-badge ${article.body_available ? 'body-available' : 'body-unavailable'}">${article.body_available ? 'Yes' : 'No'}</span></td>
+                <td>
+                    <button onclick="deleteArticle(${article.id})" class="admin-btn danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+        
+    } catch (err) {
+        console.error('Error loading admin articles:', err);
+        document.getElementById('adminArticlesBody').innerHTML = '<tr><td colspan="6" class="error">Failed to load articles</td></tr>';
+    }
+}
+
+function toggleAllArticles() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.article-checkbox');
+    checkboxes.forEach(checkbox => checkbox.checked = selectAll.checked);
+}
+
+function getSelectedArticleIds() {
+    return Array.from(document.querySelectorAll('.article-checkbox:checked')).map(cb => parseInt(cb.value));
+}
+
+async function deleteSelectedArticles() {
+    const ids = getSelectedArticleIds();
+    if (ids.length === 0) {
+        alert('Please select articles to delete');
+        return;
+    }
+    
+    if (confirm(`Delete ${ids.length} articles? This cannot be undone.`)) {
+        try {
+            const response = await fetch('/api/admin/articles/delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids })
+            });
+            
+            if (response.ok) {
+                alert('Articles deleted successfully');
+                loadAdminArticles();
+            } else {
+                alert('Failed to delete articles');
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function deleteArticle(id) {
+    if (confirm('Delete this article? This cannot be undone.')) {
+        try {
+            const response = await fetch(`/api/admin/articles/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('Article deleted successfully');
+                loadAdminArticles();
+            } else {
+                alert('Failed to delete article');
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function publishSelectedArticles() {
+    const ids = getSelectedArticleIds();
+    if (ids.length === 0) {
+        alert('Please select articles to publish');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/admin/articles/publish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+        
+        if (response.ok) {
+            alert('Articles published successfully');
+            loadAdminArticles();
+        } else {
+            alert('Failed to publish articles');
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+}
+
+async function unpublishSelectedArticles() {
+    const ids = getSelectedArticleIds();
+    if (ids.length === 0) {
+        alert('Please select articles to unpublish');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/admin/articles/unpublish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+        
+        if (response.ok) {
+            alert('Articles unpublished successfully');
+            loadAdminArticles();
+        } else {
+            alert('Failed to unpublish articles');
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+}
+
+function refreshAdminList() {
+    loadAdminArticles();
+}
+
+async function triggerManualScrape() {
+    if (confirm('Trigger manual scrape? This may take a few minutes.')) {
+        try {
+            const response = await fetch('/api/admin/scrape', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert(`Scraping started: ${result.message}`);
+                updateScrapingStatus();
+            } else {
+                alert('Failed to start scraping: ' + result.error);
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function triggerAIProcessing() {
+    if (confirm('Trigger AI processing? This may take a few minutes.')) {
+        try {
+            const response = await fetch('/api/admin/ai-process', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert(`AI processing started: ${result.message}`);
+            } else {
+                alert('Failed to start AI processing: ' + result.error);
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function updateScrapingStatus() {
+    try {
+        const response = await fetch('/api/admin/status');
+        const status = await response.json();
+        
+        document.getElementById('lastScrapeTime').textContent = status.lastScrape || 'Unknown';
+        document.getElementById('nextScrapeTime').textContent = status.nextScrape || 'Unknown';
+    } catch (err) {
+        console.error('Error updating status:', err);
+    }
+}
+
+async function clearOldArticles() {
+    if (confirm('Delete all articles older than 30 days? This cannot be undone.')) {
+        try {
+            const response = await fetch('/api/admin/cleanup', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert(`Cleanup completed: ${result.deleted} articles deleted`);
+                loadAdminArticles();
+            } else {
+                alert('Failed to cleanup: ' + result.error);
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function exportDatabase() {
+    try {
+        const response = await fetch('/api/admin/export');
+        const blob = await response.blob();
+        
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `articles-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        alert('Database exported successfully');
+    } catch (err) {
+        alert('Error exporting database: ' + err.message);
+    }
+}
+
+async function showDatabaseStats() {
+    try {
+        const response = await fetch('/api/admin/stats');
+        const stats = await response.json();
+        
+        alert(`Database Statistics:\n\n` +
+              `Total Articles: ${stats.total}\n` +
+              `Published: ${stats.published}\n` +
+              `With Full Body: ${stats.withBody}\n` +
+              `Sources: ${stats.sources}\n` +
+              `Oldest Article: ${stats.oldest}\n` +
+              `Newest Article: ${stats.newest}`);
+    } catch (err) {
+        alert('Error getting stats: ' + err.message);
+    }
+}
+
+// AI Content functions
+async function loadAIContent() {
+    try {
+        const response = await fetch('/api/ai/content');
+        const data = await response.json();
+        
+        const container = document.getElementById('aiContentContainer');
+        if (data.content && data.content.articles) {
+            container.innerHTML = data.content.articles.map(article => `
+                <div class="ai-article-card">
+                    <h4>${article.title}</h4>
+                    <span class="ai-score">Quality: ${article.analysis?.qualityScore || 'N/A'}/10</span>
+                    <span class="ai-score">Category: ${article.analysis?.category || 'N/A'}</span>
+                    <p>${article.enhancedSummary || article.description}</p>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div class="loading">No AI content available</div>';
+        }
+    } catch (err) {
+        console.error('Error loading AI content:', err);
+        document.getElementById('aiContentContainer').innerHTML = '<div class="error">Failed to load AI content</div>';
+    }
+}
+
+function refreshAIContent() {
+    loadAIContent();
+}
+
+async function publishAISelection() {
+    if (confirm('Publish AI-selected content to front page?')) {
+        try {
+            const response = await fetch('/api/ai/publish', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert('AI content published successfully');
+            } else {
+                alert('Failed to publish: ' + result.error);
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function regenerateAIContent() {
+    if (confirm('Regenerate AI content? This will re-analyze all recent articles.')) {
+        try {
+            const response = await fetch('/api/ai/regenerate', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert('AI content regeneration started');
+                loadAIContent();
+            } else {
+                alert('Failed to regenerate: ' + result.error);
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+async function saveAIConfig() {
+    const config = {
+        qualityThreshold: parseInt(document.getElementById('qualityThreshold').value),
+        maxArticles: parseInt(document.getElementById('maxArticles').value),
+        categories: Array.from(document.querySelectorAll('.category-checkboxes input:checked')).map(cb => cb.value)
+    };
+    
+    try {
+        const response = await fetch('/api/ai/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config)
+        });
+        
+        const result = await response.json();
+        if (response.ok) {
+            alert('AI configuration saved successfully');
+        } else {
+            alert('Failed to save config: ' + result.error);
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+}
         window.onclick = function(event) {
             const modal = document.getElementById('articleModal');
             if (event.target === modal) {
