@@ -1,92 +1,64 @@
-# New Yorker Scraper API (Vercel-ready)
+# Buenos Días Chile (News Aggregator & AI System)
 
-This project exposes a Vercel-compatible serverless API to scrape recent New Yorker news articles using **sitemaps + JSON-LD** and store them in **Postgres**.
+This project is a comprehensive news aggregation system that scrapes news sources, processes them using AI, and serves them via a modern web interface ("News Outlet").
 
-## Overview
+## 🏗️ Architecture
 
-- Uses `https://www.newyorker.com/sitemap-archive-5.xml` to discover article URLs.
-- Filters URLs containing `/news/`.
-- For each article page:
-  - Fetches HTML via `fetch`.
-  - Extracts structured data from `application/ld+json` (schema.org).
-  - Falls back to OpenGraph / meta tags.
-- Upserts results into a Postgres table `newyorker_articles`.
+The system is designed to be deployed on **Render** and consists of two main components:
 
-## Files
+### 1. The News Outlet (Frontend)
+- **Role:** The public-facing website and admin dashboard.
+- **Entrypoint:** `dashboard-server.js`
+- **Features:**
+  - Serves the main news site (`index.html`) at `/`.
+  - Serves the admin dashboard (`dashboard.html`) at `/dashboard`.
+  - Provides API endpoints for the frontend to fetch articles.
 
-- `api/scrape-newyorker.js` – Vercel serverless function entrypoint.
-- `lib/newyorkerScraper.js` – sitemap + article scraping logic.
-- `lib/db.js` – Postgres connection and upsert helpers.
-- `package.json` – dependencies and scripts.
+### 2. Scraper & AI Analysis System (Backend)
+- **Role:** Background workers that fetch content and generate AI summaries.
+- **Components:**
+  - **Scraper:** Runs on a schedule (Cron) to fetch articles from configured sources (e.g., The New Yorker).
+    - Entrypoint: `api/scrape-all.js`
+  - **AI Processor:** Analyzes articles to generate summaries and insights.
+    - Entrypoint: `ai/processor.js`
 
-## Environment variables
+## 🚀 Deployment (Render)
 
-Set one of the following in your environment (Vercel dashboard or local `.env`):
+The project is configured for deployment on Render via `render.yaml`. It defines:
 
-- `DATABASE_URL` – full Postgres connection string (preferred), or
-- `POSTGRES_URL` – alternative name if you already use it.
+1.  **PostgreSQL Database (`news-db`):** Stores articles and AI content.
+2.  **Scraper Service (`news-scraper`):** A background worker that runs the scraping scripts.
+3.  **AI Processor (`ai-processor`):** A service to handle AI content generation.
+4.  **News Outlet (`news-outlet`):** The web service that serves the frontend and dashboard.
 
-Example connection string:
+## 🛠️ Local Development
 
-```text
-postgres://USER:PASSWORD@HOST:PORT/DBNAME
-```
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-## Database schema
+2.  **Setup Environment:**
+    Create a `.env` file with:
+    ```
+    DATABASE_URL=postgres://user:pass@localhost:5432/mejoresnoticias
+    OPENAI_API_KEY=your_openai_key
+    ```
 
-On first invocation, the API will ensure the table exists:
+3.  **Run the News Outlet:**
+    ```bash
+    npm run dashboard
+    ```
+    Visit `http://localhost:3000` for the site.
 
-```sql
-CREATE TABLE IF NOT EXISTS newyorker_articles (
-  id BIGSERIAL PRIMARY KEY,
-  url TEXT UNIQUE NOT NULL,
-  title TEXT,
-  description TEXT,
-  image_url TEXT,
-  published_at TIMESTAMPTZ,
-  scraped_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  raw_jsonld TEXT
-);
-```
+4.  **Run Scrapers Manually:**
+    ```bash
+    npm run scrape:newyorker
+    ```
 
-## Running locally
+## 📁 Key Files
 
-1. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. Ensure `DATABASE_URL` (or `POSTGRES_URL`) is set in your shell.
-
-3. Run the function locally (for a simple smoke test) with Node:
-
-   ```bash
-   node api/scrape-newyorker.js
-   ```
-
-   For proper local API behavior, deploy via Vercel CLI or integrate into a Next.js app.
-
-## Deploying on Vercel
-
-1. Push this project to a Git repo (GitHub, GitLab, etc.).
-2. Create a new Vercel project and link the repo.
-3. In Vercel project settings, set `DATABASE_URL` to your Postgres connection string.
-4. Deploy.
-
-Your scraping endpoint will be available at:
-
-```text
-https://<your-vercel-project>.vercel.app/api/scrape-newyorker
-```
-
-You can optionally limit the number of articles scraped (default: 50):
-
-```text
-https://<your-vercel-project>.vercel.app/api/scrape-newyorker?limit=20
-```
-
-## Notes
-
-- This scraper relies on New Yorker sitemaps and JSON-LD, which is much less brittle than CSS selectors.
-- Always respect New Yorker\'s Terms of Use and avoid aggressive scraping (Vercel functions already batch calls, but you can add further throttling if needed).
+- `dashboard-server.js` - Main web server (News Outlet).
+- `lib/multiSiteScraper.js` - Core scraping logic.
+- `ai/processor.js` - AI content generation logic.
+- `render.yaml` - Render deployment configuration.

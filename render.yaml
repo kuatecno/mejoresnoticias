@@ -38,6 +38,20 @@ services:
       - key: OPENAI_API_KEY
         sync: false
 
+  # News Outlet (Frontend & Dashboard)
+  - type: web
+    name: news-outlet
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node dashboard-server.js"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: news-db
+          property: connectionString
+
+
 # Cron Jobs for multiple news sites
 cronJobs:
   - name: scrape-newyorker-morning

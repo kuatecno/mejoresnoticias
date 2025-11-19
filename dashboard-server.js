@@ -26,7 +26,7 @@ app.use(express.static('.'));
 app.get('/api/test', async (req, res) => {
   try {
     console.log('Testing database connection...');
-    const { rows } = await pool.query('SELECT COUNT(*) as count FROM newyorker_articles');
+    const { rows } = await pool.query('SELECT COUNT(*) as count FROM articles');
     console.log('Database test result:', rows);
     res.json({ success: true, count: rows[0].count });
   } catch (err) {
@@ -67,7 +67,7 @@ app.get('/api/articles', async (req, res) => {
         published_at,
         scraped_at,
         url
-      FROM newyorker_articles 
+      FROM articles 
       ${whereClause}
       ORDER BY published_at DESC, scraped_at DESC
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
@@ -88,7 +88,7 @@ app.get('/api/articles', async (req, res) => {
     // Get total count for pagination
     const countQuery = `
       SELECT COUNT(*) as total
-      FROM newyorker_articles 
+      FROM articles 
       ${whereClause}
     `;
     
@@ -121,7 +121,7 @@ app.get('/api/articles/:id', async (req, res) => {
     const { id } = req.params;
     
     const query = `
-      SELECT * FROM newyorker_articles 
+      SELECT * FROM articles 
       WHERE id = $1
     `;
     
@@ -146,7 +146,7 @@ app.get('/api/stats', async (req, res) => {
         COUNT(*) as total,
         COUNT(CASE WHEN body_available = true THEN 1 END) as with_body,
         COUNT(CASE WHEN body_available = false THEN 1 END) as without_body
-      FROM newyorker_articles
+      FROM articles
     `;
     
     const { rows } = await pool.query(query);
@@ -162,7 +162,7 @@ app.get('/api/stats', async (req, res) => {
 app.delete('/api/admin/articles/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const query = 'DELETE FROM newyorker_articles WHERE id = $1';
+    const query = 'DELETE FROM articles WHERE id = $1';
     await pool.query(query, [id]);
     res.json({ success: true });
   } catch (err) {
@@ -178,7 +178,7 @@ app.delete('/api/admin/articles/delete', async (req, res) => {
       return res.status(400).json({ error: 'Invalid article IDs' });
     }
     
-    const query = 'DELETE FROM newyorker_articles WHERE id = ANY($1)';
+    const query = 'DELETE FROM articles WHERE id = ANY($1)';
     await pool.query(query, [ids]);
     res.json({ success: true, deleted: ids.length });
   } catch (err) {
@@ -194,7 +194,7 @@ app.post('/api/admin/articles/publish', async (req, res) => {
       return res.status(400).json({ error: 'Invalid article IDs' });
     }
     
-    const query = 'UPDATE newyorker_articles SET published = true WHERE id = ANY($1)';
+    const query = 'UPDATE articles SET published = true WHERE id = ANY($1)';
     await pool.query(query, [ids]);
     res.json({ success: true, published: ids.length });
   } catch (err) {
@@ -210,7 +210,7 @@ app.post('/api/admin/articles/unpublish', async (req, res) => {
       return res.status(400).json({ error: 'Invalid article IDs' });
     }
     
-    const query = 'UPDATE newyorker_articles SET published = false WHERE id = ANY($1)';
+    const query = 'UPDATE articles SET published = false WHERE id = ANY($1)';
     await pool.query(query, [ids]);
     res.json({ success: true, unpublished: ids.length });
   } catch (err) {
@@ -223,9 +223,11 @@ app.post('/api/admin/scrape', async (req, res) => {
   try {
     // Trigger manual scrape
     const { spawn } = require('child_process');
+    // Set LIMIT=50 environment variable for the scrape process
     const scrapeProcess = spawn('npm', ['run', 'scrape:all'], {
       cwd: __dirname,
-      detached: true
+      detached: true,
+      env: { ...process.env, LIMIT: '50' }
     });
     
     scrapeProcess.unref();
@@ -260,7 +262,7 @@ app.get('/api/admin/status', async (req, res) => {
       SELECT 
         MAX(scraped_at) as last_scrape,
         COUNT(*) as total_articles
-      FROM newyorker_articles
+      FROM articles
     `;
     
     const { rows } = await pool.query(query);
@@ -286,7 +288,7 @@ app.get('/api/admin/status', async (req, res) => {
 
 app.post('/api/admin/cleanup', async (req, res) => {
   try {
-    const query = 'DELETE FROM newyorker_articles WHERE scraped_at < NOW() - INTERVAL \'30 days\'';
+    const query = 'DELETE FROM articles WHERE scraped_at < NOW() - INTERVAL \'30 days\'';
     const { rows } = await pool.query(query);
     res.json({ success: true, deleted: rows.length });
   } catch (err) {
@@ -297,7 +299,7 @@ app.post('/api/admin/cleanup', async (req, res) => {
 
 app.get('/api/admin/export', async (req, res) => {
   try {
-    const query = 'SELECT * FROM newyorker_articles ORDER BY scraped_at DESC';
+    const query = 'SELECT * FROM articles ORDER BY scraped_at DESC';
     const { rows } = await pool.query(query);
     
     const exportData = {
@@ -325,7 +327,7 @@ app.get('/api/admin/stats', async (req, res) => {
         COUNT(DISTINCT source) as sources,
         MIN(published_at) as oldest,
         MAX(published_at) as newest
-      FROM newyorker_articles
+      FROM articles
     `;
     
     const { rows } = await pool.query(query);

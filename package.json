@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "scrape:newyorker": "node api/scrape-newyorker.js",
     "scrape:all": "node api/scrape-all.js",
     "ai:process": "node ai/processor.js",
     "ai:select": "node ai/select-and-generate.js",

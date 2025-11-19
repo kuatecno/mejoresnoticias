@@ -24,7 +24,7 @@ async function viewArticles() {
         published_at,
         scraped_at,
         url
-      FROM newyorker_articles 
+      FROM articles 
       ORDER BY published_at DESC, scraped_at DESC
       LIMIT 10
     `;
@@ -54,7 +54,7 @@ async function viewArticles() {
       console.log(`Title: ${fullArticle.title}`);
       console.log('Body:');
       
-      const bodyQuery = 'SELECT body_text FROM newyorker_articles WHERE id = $1';
+      const bodyQuery = 'SELECT body_text FROM articles WHERE id = $1';
       const { rows: bodyRows } = await pool.query(bodyQuery, [fullArticle.id]);
       
       if (bodyRows[0] && bodyRows[0].body_text) {
@@ -68,7 +68,7 @@ async function viewArticles() {
         COUNT(*) as total,
         COUNT(CASE WHEN body_available = true THEN 1 END) as with_body,
         COUNT(CASE WHEN body_available = false THEN 1 END) as without_body
-      FROM newyorker_articles
+      FROM articles
     `;
     
     const { rows: statsRows } = await pool.query(statsQuery);

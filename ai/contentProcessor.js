@@ -28,7 +28,7 @@ class ContentProcessor {
 
   async getRecentArticles(limit = 50) {
     const query = `
-      SELECT * FROM newyorker_articles 
+      SELECT * FROM articles 
       WHERE scraped_at > NOW() - INTERVAL '24 hours'
       ORDER BY published_at DESC, scraped_at DESC
       LIMIT $1
